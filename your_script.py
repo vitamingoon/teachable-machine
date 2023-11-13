@@ -24,15 +24,22 @@ def predict_image(frame):
 # Streamlit app
 st.title("Teachable Machine Image Classifier")
 
+# Counter for uploaded files
+file_count = st.session_state.get("file_count", 0)
+
 # File uploader
 uploaded_file = st.file_uploader("Choose a file", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
+    # Increment the file count
+    file_count += 1
+    st.session_state.file_count = file_count
+
     # Read the image
     image = cv2.imdecode(np.frombuffer(uploaded_file.read(), np.uint8), 1)
 
     # Display the uploaded image
-    st.image(image, caption="Uploaded Image.", use_column_width=True)
+    st.image(image, caption=f"Uploaded Image {file_count}.", use_column_width=True)
 
     # Make predictions
     predictions = predict_image(image)
@@ -41,6 +48,9 @@ if uploaded_file is not None:
     st.write("Class probabilities:")
     for i, prob in enumerate(predictions[0]):
         st.write(f"Class {i}: {prob:.4f}")
+
+# Display the file count
+st.write(f"Total Uploaded Files: {file_count}")
 
 
 # streamlit run your_script.py
